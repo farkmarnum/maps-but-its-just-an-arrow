@@ -1,6 +1,3 @@
-/**
- * Some predefined delays (in milliseconds).
- */
 export enum Delays {
   Short = 500,
   Medium = 2000,
@@ -23,10 +20,6 @@ function delayedHello(
   );
 }
 
-// Below are examples of using ESLint errors suppression
-// Here it is suppressing missing return type definitions for greeter function
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export async function greeter(name: string) {
+export async function greeter(name: string): Promise<string> {
   return await delayedHello(name, Delays.Long);
 }
