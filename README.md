@@ -1,1 +1,1 @@
-tbd
+typescript-starter
