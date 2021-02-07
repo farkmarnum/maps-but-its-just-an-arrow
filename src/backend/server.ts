@@ -1,35 +1,46 @@
-import { autocompletePlace, getDirections } from './helpers/maps'
-import * as polyline from '@mapbox/polyline'
+import * as express from 'express'
+import * as bodyParser from 'body-parser'
+import { autocompletePlace, getPointsForRoute } from './helpers/maps'
 
-const main = async () => {
-  const suggestions = await autocompletePlace('***REMOVED***')
-  const [place] = suggestions
-  const { place_id: placeId } = place
+const app = express()
 
-  const steps = await getDirections({
-    destinationPlaceId: placeId,
-    originLat: 40.781322,
-    originLng: -73.973991,
-  })
+app.use(bodyParser.json())
 
-  // steps = steps.reduce(
-  //   (acc, step) => [
-  //     ...acc,
-  //     {
-  //       ...step,
-  //       polyline: {
-  //         points: polyline.decode(step.polyline.points),
-  //       },
-  //     },
-  //   ],
-  //   [],
-  // )
+app.get('/', (_req: express.Request, res: express.Result) => {
+  res.sendStatus(200)
+})
 
-  const points = steps.reduce(
-    (acc, step) => [...acc, ...polyline.decode(step.polyline.points)],
-    [],
-  )
-  console.info(JSON.stringify(points))
-}
+app.get('/suggestions', async (req: express.Request, res: express.Result) => {
+  try {
+    const { input } = req.body
 
-main()
+    const suggestions = await autocompletePlace(input)
+
+    res.json({ suggestions })
+  } catch (err) {
+    console.error(err)
+    res.sendStatus(500)
+  }
+})
+
+app.get('/directions', async (req: express.Request, res: express.Result) => {
+  try {
+    const { destinationPlaceId, originLat, originLng } = req.body
+
+    const points = await getPointsForRoute({
+      destinationPlaceId,
+      originLat,
+      originLng,
+    })
+
+    res.json({ points })
+  } catch (err) {
+    console.error(err)
+    res.sendStatus(500)
+  }
+})
+
+const port = process.env.PORT
+app.listen(port)
+
+console.info(`Server running on port ${port}`)

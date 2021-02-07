@@ -1,10 +1,12 @@
-import * as dotenv from 'dotenv'
 import {
   Client,
   PlaceAutocompleteResult,
   TravelMode,
   DirectionsStep,
 } from '@googlemaps/google-maps-services-js'
+import * as polyline from '@mapbox/polyline'
+import * as dotenv from 'dotenv'
+import { removeConsecutiveDuplicates } from './utils'
 
 interface GetDirectionsArgs {
   destinationPlaceId: string
@@ -66,4 +68,24 @@ export const getDirections = async ({
     console.error(errorMsg)
     throw new Error(errorMsg)
   }
+}
+
+export const getPointsForRoute = async ({
+  destinationPlaceId,
+  originLat,
+  originLng,
+}: GetDirectionsArgs): Promise<number[][]> => {
+  const steps = await getDirections({
+    destinationPlaceId,
+    originLat,
+    originLng,
+  })
+
+  const points = steps.reduce(
+    (acc, step) => [...acc, ...polyline.decode(step.polyline.points)],
+    [],
+  )
+
+  const uniquePoints = removeConsecutiveDuplicates<number[]>(points)
+  return uniquePoints
 }
