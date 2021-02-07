@@ -1,9 +1,11 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
+import * as cors from 'cors'
 import { autocompletePlace, getPointsForRoute } from './helpers/maps'
 
 const app = express()
 
+app.use(cors())
 app.use(bodyParser.json())
 
 app.get('/', (_req: express.Request, res: express.Result) => {
@@ -12,7 +14,7 @@ app.get('/', (_req: express.Request, res: express.Result) => {
 
 app.get('/suggestions', async (req: express.Request, res: express.Result) => {
   try {
-    const { input } = req.body
+    const { input } = req.query
 
     const suggestions = await autocompletePlace(input)
 
@@ -25,7 +27,7 @@ app.get('/suggestions', async (req: express.Request, res: express.Result) => {
 
 app.get('/directions', async (req: express.Request, res: express.Result) => {
   try {
-    const { destinationPlaceId, originLat, originLng } = req.body
+    const { destinationPlaceId, originLat, originLng } = req.query
 
     const points = await getPointsForRoute({
       destinationPlaceId,

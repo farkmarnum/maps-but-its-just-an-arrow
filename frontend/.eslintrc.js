@@ -19,7 +19,10 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'no-console': ['error', { allow: ['info', 'warn', 'error'] }],
-    '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^h$' }],
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      { varsIgnorePattern: '^h$' },
+    ],
   },
 
   settings: {
