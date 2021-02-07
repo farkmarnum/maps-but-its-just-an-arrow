@@ -8,6 +8,9 @@
   "author": "Mark Farnum <mark.farnum@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.1.16",
+    "@mapbox/polyline": "^1.1.1",
+    "dotenv": "^8.2.0",
     "tslib": "~2.0.1"
   },
   "devDependencies": {
@@ -32,8 +35,8 @@
   "scripts": {
     "clean": "rimraf coverage build tmp",
     "build": "tsc -p tsconfig.release.json",
-    "serve": "node build/src/main.js",
-    "start": "tsc-watch -p tsconfig.release.json --onSuccess \"node ./build/src/main.js\"",
+    "serve": "node build/src/backend/server.js",
+    "start": "tsc-watch -p tsconfig.release.json --onSuccess \"node ./build/src/backend/server.js\"",
     "lint": "eslint . --ext .ts,.tsx",
     "test": "jest --coverage",
     "test:watch": "jest --watch"
