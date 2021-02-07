@@ -1,9 +1,11 @@
 :root {
-  --amethyst: #9b5de5ff;
-  --magenta-crayola: #f15bb5ff;
-  --minion-yellow: #fee440ff;
-  --capri: #00bbf9ff;
+  --red: #EE3625;
+  --yellow: #FFB400;
+  --blue: #00A6ED;
+  --green: #418023;
   --sea-green-crayola: #00f5d4ff;
+  --dark: #0A0908;
+  --light: #fff;
 }
 
 html, body {
@@ -11,10 +13,10 @@ html, body {
 	width: 100%;
 	padding: 0;
 	margin: 0;
-	background: var(--capri);
+	background: var(--green);
 	font-family: 'Helvetica Neue', arial, sans-serif;
 	font-weight: 400;
-	color: #200a00;
+	color: var(--dark);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
@@ -25,4 +27,52 @@ html, body {
 
 #app {
 	height: 100%;
+}
+
+.top-right {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.25rem;
+  width: 100%;
+  text-align: right;
+}
+
+.loading {
+  margin-right: 0.75rem;
+  color: var(--light);
+}
+
+.loading:after {
+  content: '.';
+  animation: dots 1s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
+    text-shadow:
+      .25em 0 0 rgba(0, 0, 0, 0),
+      .5em 0 0 rgba(0, 0, 0, 0);
+  }
+
+  40% {
+    color: var(--light);
+    text-shadow:
+      .25em 0 0 rgba(0, 0, 0, 0),
+      .5em 0 0 rgba(0, 0, 0, 0);
+  }
+
+  60% {
+    text-shadow:
+      .25em 0 0 var(--light),
+      .5em 0 0 rgba(0, 0, 0, 0);
+  }
+
+  80%,
+  100% {
+    text-shadow:
+      .25em 0 0 var(--light),
+      .5em 0 0 var(--light);
+  }
 }

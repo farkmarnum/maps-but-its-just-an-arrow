@@ -29,6 +29,11 @@ const App: FunctionalComponent = () => {
         setUserLocation([pos.coords.latitude, pos.coords.longitude])
       })
       .catch((err) => console.error(err))
+
+    // window.addEventListener("deviceorientation", handleOrientationChange, true);
+    // return () => {
+      // window.removeEventListener("deviceorientation", handleOrientationChange, true);
+    // }
   }, [])
 
   useEffect(() => {
@@ -70,7 +75,13 @@ const App: FunctionalComponent = () => {
 
   return (
     <div id="app">
-      {userLocation && <LocationPin />}
+      <div className="top-right">
+        {userLocation ? (
+          <LocationPin />
+        ) : (
+          <div className="loading">loading gps</div>
+        )}
+      </div>
       {currentPage === WHERE_TO && (
         <WhereTo
           setInput={setInput}

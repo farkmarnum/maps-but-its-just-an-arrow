@@ -1,19 +1,33 @@
 .main {
-  margin-top: 2rem;
+  margin-top: 3rem;
 }
 
 .main h1 {
   margin: 0;
   text-align: center;
+  color: var(--light);
 }
 
 .main input {
   display: block;
-  margin: 2rem auto;
+  margin: 1rem auto;
   border: none;
   outline: none;
   border-radius: 5px;
   padding: 0.75rem;
   width: 90%;
   max-width: 400px;
+}
+
+.main button {
+  padding: 0.5rem;
+  display: block;
+  color: white;
+  background: var(--blue);
+  /* border: 1px var(--red) solid; */
+  border: none;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 5px;
+  margin: 1rem auto;
 }
