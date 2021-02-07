@@ -6,6 +6,7 @@
   margin: 0;
   text-align: center;
   color: var(--light);
+  font-weight: normal;
 }
 
 .main input {
@@ -13,21 +14,26 @@
   margin: 1rem auto;
   border: none;
   outline: none;
-  border-radius: 5px;
+  border-radius: 8px;
   padding: 0.75rem;
   width: 90%;
   max-width: 400px;
 }
 
+.main input::placeholder {
+  color: black;
+  opacity: 0.4;
+  font-style: italic;
+}
+
 .main button {
   padding: 0.5rem;
   display: block;
-  color: white;
-  background: var(--blue);
-  /* border: 1px var(--red) solid; */
+  color: var(--dark);
+  background: var(--light-green);
   border: none;
   width: 90%;
   max-width: 400px;
-  border-radius: 5px;
+  border-radius: 8px;
   margin: 1rem auto;
 }

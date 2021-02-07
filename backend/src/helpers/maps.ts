@@ -64,7 +64,7 @@ export const getDirections = async ({
 
     return leg.steps
   } catch (err) {
-    const errorMsg = err.response.data.error_message
+    const errorMsg = err.response ? err.response.data.error_message : err
     console.error(errorMsg)
     throw new Error(errorMsg)
   }

@@ -1,10 +1,10 @@
 :root {
   --red: #EE3625;
-  --yellow: #FFB400;
-  --blue: #00A6ED;
-  --green: #418023;
-  --sea-green-crayola: #00f5d4ff;
-  --dark: #0A0908;
+  --yellow: #FFCE5C;
+  --blue: #85DAFF;
+  --green: #478c26;
+  --light-green: #7fe052;
+  --dark: #000;
   --light: #fff;
 }
 
@@ -35,6 +35,7 @@ html, body {
   right: 0.25rem;
   width: 100%;
   text-align: right;
+  opacity: 0.65;
 }
 
 .loading {
