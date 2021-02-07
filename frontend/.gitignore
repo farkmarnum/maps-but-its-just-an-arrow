@@ -30,3 +30,5 @@ build/
 
 # Environment variables file
 .env
+
+size-plugin.json

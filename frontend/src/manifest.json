@@ -1,6 +1,6 @@
 {
-  "name": "maps-but-its-just-an-arrow-frontend",
-  "short_name": "just-an-arrow",
+  "name": "stupid-nav",
+  "short_name": "stupid-nav",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
