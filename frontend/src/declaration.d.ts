@@ -21,6 +21,13 @@ interface ArrowArgs {
   goBack: () => void
 }
 
+type Point = [number, number]
+interface PointWithData {
+  distance: number
+  point: Point
+  index: number
+}
+
 // FIXME: this shouldn't be necessary
 interface GeolocationPositionError {
   code: number

@@ -48,7 +48,7 @@ export const getDirections = async ({
   destinationPlaceId,
   originLat,
   originLng,
-}: GetDirectionsArgs): Promise<number[][]> => {
+}: GetDirectionsArgs): Promise<Point[]> => {
   try {
     const url = new URL(`${baseURL}/directions`)
     url.search = new URLSearchParams({

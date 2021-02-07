@@ -53,7 +53,10 @@ const App: FunctionalComponent = () => {
 
   useEffect(() => {
     const onSuccess = (pos: Record<string, any>) => {
-      console.log('user location changed!', [pos.coords.latitude, pos.coords.longitude])
+      console.info('user location changed!', [
+        pos.coords.latitude,
+        pos.coords.longitude,
+      ])
       setUserLocation([pos.coords.latitude, pos.coords.longitude])
     }
 

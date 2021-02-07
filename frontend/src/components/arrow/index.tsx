@@ -7,7 +7,7 @@ import style from './style.css'
 
 const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
   const [deviceAngle, setDeviceAngle] = useState<number | undefined>(undefined)
-  const [points, setPoints] = useState<number[][] | undefined>(undefined)
+  const [points, setPoints] = useState<Point[] | undefined>(undefined)
   const shouldGetDirections = useRef(true)
 
   const handleOrientationChange = (evt: DeviceOrientationEvent) => {
@@ -34,7 +34,7 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
         originLat: userLocation[0],
         originLng: userLocation[1],
       })
-        .then((newPoints: number[][]) => {
+        .then((newPoints: Point[]) => {
           shouldGetDirections.current = false
           setPoints(newPoints)
         })
@@ -44,7 +44,9 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
     }
   }, [placeId, userLocation, shouldGetDirections])
 
+  console.log('hello?')
   const calculateNextPoint = useCallback(() => {
+    console.log('calculateNextPoint')
     if (deviceAngle != null && userLocation && points) {
       return getNextPoint(points, userLocation)
     }

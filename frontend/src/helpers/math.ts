@@ -1,22 +1,28 @@
-const NEXT_N_POINTS_COUNT = 3
+const DISTANCE_CUTOFF_METERS = 5
 
-const squaredDistance = (a: number[], b: number[]) =>
-  Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2)
+const distance = (one: number[], two: number[]) => {
+  const [lat1, lon1] = one
+  const [lat2, lon2] = two
+  const R = 6378.137 // Radius of earth in KM
+  const dLat = (lat2 * Math.PI) / 180 - (lat1 * Math.PI) / 180
+  const dLon = (lon2 * Math.PI) / 180 - (lon1 * Math.PI) / 180
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  const d = R * c
+  return d * 1000 // meters
+}
 
-type Distance = number
-type Point = [number, number]
-type Index = number
+const sortByDistance = (a: PointWithData, b: PointWithData) =>
+  a.distance - b.distance
+const sortByIndex = (a: PointWithData, b: PointWithData) => a.index - b.index
 
-type PointWithDistance = [Distance, Point, Index]
-
-const sortByDistance = (a: PointWithDistance, b: PointWithDistance) =>
-  a[0] - b[0]
-const sortByIndex = (a: PointWithDistance, b: PointWithDistance) => a[2] - b[2]
-
-export const getNextPoint = (
-  points: number[][],
-  origin: number[],
-): number[] => {
+export const getNextPoint = (points: Point[], origin: number[]): number[] => {
+  console.log('getNextPoint')
   if (points.length == 0) {
     throw new Error('No points on route!')
   }
@@ -24,40 +30,46 @@ export const getNextPoint = (
     return points.slice(-1)[0]
   }
 
-  const pointsWithDistance: PointWithDistance[] = []
+  const pointsWithData: PointWithData[] = []
 
-  points.forEach((point: number[], i: number) => {
-    const dist = squaredDistance(origin, point)
-    pointsWithDistance.push([dist, point as Point, i])
+  points.forEach((point, index) => {
+    const dist = distance(origin, point)
+    pointsWithData.push({ distance: dist, point, index })
   })
 
-  pointsWithDistance.sort(sortByDistance)
-
-  // Get the closest N points
-  const closestNPoints = pointsWithDistance.slice(0, NEXT_N_POINTS_COUNT + 1)
-  closestNPoints.sort(sortByIndex)
-
-  // Weight them by how far they are along the route
-  const weightedPoints: [Point, number][] = closestNPoints.map(
-    ([_, point], i) => {
-      // heavily weight the last point:
-      return [point, i + 1]
-    },
+  pointsWithData.sort(sortByDistance)
+  const closestThreePoints = pointsWithData.slice(0, 3)
+  /*
+   * Edge case: If the user is sitting right on point0, the 0th point will be filtered out due to being too close, and then closestTwoPointsFiltered would look like this:
+   * [
+   *   [20, <point1>, 1],
+   *   [40, <point2>, 2],
+   * ]
+   *
+   * In this case we want to nav towards point1, since it's the best near point, but we'll then end up with point2 instead.
+   * So if closestThreePoints has indices 0, 1, and 2, and dist0 < DISTANCE_CUTOFF_METERS, nextPoint = closestThreePoints[1].point
+   *
+   * Otherwise, we throw out any points that are too close, narrow it down to 2 points, and then navigate towards whichever is further down the route (whichever has a greater index)
+   * ]
+   */
+  const indices = closestThreePoints.map(({ index }) => index)
+  if (
+    indices.includes(0) &&
+    indices.includes(1) &&
+    indices.includes(2) &&
+    closestThreePoints[0].distance < DISTANCE_CUTOFF_METERS
+  ) {
+    return closestThreePoints[1].point
+  }
+  const closestThreePointsFiltered = closestThreePoints.filter(
+    ({ distance: dist }) => dist > DISTANCE_CUTOFF_METERS,
   )
 
-  let sumLat = 0
-  let sumLng = 0
-  let sumWeights = 0
+  const closestPointsSortedByIndex = closestThreePointsFiltered
+  closestPointsSortedByIndex.sort(sortByIndex)
 
-  weightedPoints.forEach(([point, weight]) => {
-    sumLat += point[0] * weight
-    sumLng += point[1] * weight
-    sumWeights += weight
-  })
-
-  const averagedPoint = [sumLat / sumWeights, sumLng / sumWeights]
-
-  return averagedPoint
+  const nextPointData = closestPointsSortedByIndex.slice(-1)[0]
+  return nextPointData.point
 }
 
 export const getAngle = (origin: number[], dest: number[]): number => {
@@ -65,6 +77,6 @@ export const getAngle = (origin: number[], dest: number[]): number => {
   const dy = origin[0] - dest[0]
   const theta = (Math.atan2(dy, dx) * 180) / Math.PI
 
-  console.log(`dx: ${dx}  dy: ${dy} theta: ${theta}`)
+  console.info(`dx: ${dx}  dy: ${dy} theta: ${theta}`)
   return theta
 }
