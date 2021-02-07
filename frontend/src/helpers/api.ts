@@ -1,18 +1,41 @@
+import toastr from 'toastr'
 const baseURL = process.env.PREACT_APP_BACKEND_URL
 
 if (!baseURL) {
   throw new Error('PREACT_APP_BACKEND_URL must be specified!')
 }
 
-export const getSuggestions = async (input: string): Promise<Suggestion[]> => {
-  const url = new URL(`${baseURL}/suggestions`)
-  url.search = new URLSearchParams({ input }).toString()
+interface GetSuggestionsArgs {
+  input: string
+  location?: [number, number]
+}
 
-  const response = await fetch(url.toString())
-  const data = await response.json()
+export const getSuggestions = async ({
+  input,
+  location,
+}: GetSuggestionsArgs): Promise<Suggestion[]> => {
+  try {
+    const params: Record<string, string> = { input }
+    if (location) {
+      params.location = `${location[0]},${location[1]}`
+    }
 
-  const { suggestions } = data
-  return suggestions
+    const url = new URL(`${baseURL}/suggestions`)
+    url.search = new URLSearchParams(params).toString()
+
+    const response = await fetch(url.toString())
+    const data = await response.json()
+
+    const { error, suggestions } = data
+    if (error) {
+      throw new Error(error)
+    }
+
+    return suggestions
+  } catch (err) {
+    toastr.error(err.message)
+    throw err
+  }
 }
 
 interface GetDirectionsArgs {
@@ -26,16 +49,24 @@ export const getDirections = async ({
   originLat,
   originLng,
 }: GetDirectionsArgs): Promise<number[][]> => {
-  const url = new URL(`${baseURL}/directions`)
-  url.search = new URLSearchParams({
-    destinationPlaceId,
-    originLat: String(originLat),
-    originLng: String(originLng),
-  }).toString()
+  try {
+    const url = new URL(`${baseURL}/directions`)
+    url.search = new URLSearchParams({
+      destinationPlaceId,
+      originLat: String(originLat),
+      originLng: String(originLng),
+    }).toString()
 
-  const response = await fetch(url.toString())
-  const data = await response.json()
+    const response = await fetch(url.toString())
+    const data = await response.json()
 
-  const { points } = data
-  return points
+    const { error, points } = data
+    if (error) {
+      throw new Error(error)
+    }
+    return points
+  } catch (err) {
+    toastr.error(err.message)
+    throw err
+  }
 }

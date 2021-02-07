@@ -14,14 +14,14 @@ app.get('/', (_req: express.Request, res: express.Result) => {
 
 app.get('/suggestions', async (req: express.Request, res: express.Result) => {
   try {
-    const { input } = req.query
+    const { input, location } = req.query
 
-    const suggestions = await autocompletePlace(input)
+    const suggestions = await autocompletePlace(input, location)
 
     res.json({ suggestions })
   } catch (err) {
     console.error(err)
-    res.sendStatus(500)
+    res.status(500).json({ error: err.message })
   }
 })
 
@@ -38,7 +38,7 @@ app.get('/directions', async (req: express.Request, res: express.Result) => {
     res.json({ points })
   } catch (err) {
     console.error(err)
-    res.sendStatus(500)
+    res.status(500).json({ error: err.message })
   }
 })
 

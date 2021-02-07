@@ -68,7 +68,7 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
       <div className={style.close}>
         <button onClick={goBack}>&times;</button>
       </div>
-      <div className={style.main}>
+      <div className={style.main} style={{ display: 'none' }}>
         {!userLocation && 'Loading GPS...'}
         {userLocation && (
           <div>
@@ -85,7 +85,10 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
       </div>
       <div
         class={style.arrow}
-        style={{ transform: `rotate(${arrowAngle}deg)` }}
+        style={{
+          transform: `rotate(${arrowAngle}deg)`,
+          display: arrowAngle != null ? 'block' : 'none',
+        }}
       >
         <div class={style.line} />
         <div class={style.point} />

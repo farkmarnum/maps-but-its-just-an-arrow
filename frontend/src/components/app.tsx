@@ -52,7 +52,10 @@ const App: FunctionalComponent = () => {
 
   useEffect(() => {
     if (input) {
-      getSuggestions(input)
+      getSuggestions({
+        input,
+        location: userLocation as [number, number] | undefined,
+      })
         .then((newSuggestions: Suggestion[]) => {
           setSuggestions(newSuggestions)
         })

@@ -20,11 +20,27 @@ const key = process.env.GOOGLE_MAPS_API_KEY
 
 const client = new Client({})
 
+const METERS_IN_ONE_MILE = 1609
+
+interface AutocompletePlaceQueryParams {
+  input: string
+  key: string
+  location?: string
+  radius?: number
+}
+
 export const autocompletePlace = async (
   input: string,
+  location?: string,
 ): Promise<PlaceAutocompleteResult[]> => {
   try {
-    const resp = await client.placeAutocomplete({ params: { input, key } })
+    const params: AutocompletePlaceQueryParams = { input, key }
+    if (location) {
+      params.location = location
+      params.radius = METERS_IN_ONE_MILE * 2
+    }
+    console.log(params)
+    const resp = await client.placeAutocomplete({ params })
     return resp.data.predictions
   } catch (err) {
     const errorMsg = err.response.data.error_message
