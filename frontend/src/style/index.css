@@ -6,6 +6,8 @@
   --light-green: #7fe052;
   --dark: #000;
   --light: #fff;
+
+  --main-background-color: var(--green);
 }
 
 html, body {
@@ -13,12 +15,12 @@ html, body {
 	width: 100%;
 	padding: 0;
 	margin: 0;
-	background: var(--green);
 	font-family: 'Helvetica Neue', arial, sans-serif;
 	font-weight: 400;
-	color: var(--dark);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	background: var(--main-background-color);
+	color: var(--dark);
 }
 
 * {
@@ -27,6 +29,11 @@ html, body {
 
 #app {
 	height: 100%;
+  position: relative;
+}
+
+:not(:root):fullscreen::backdrop {
+  background: none;
 }
 
 .top-right {
@@ -35,7 +42,14 @@ html, body {
   right: 0.25rem;
   width: 100%;
   text-align: right;
-  opacity: 0.65;
+}
+
+.bottom-right {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.25rem;
+  width: 100%;
+  text-align: right;
 }
 
 .loading {
@@ -76,4 +90,15 @@ html, body {
       .25em 0 0 var(--light),
       .5em 0 0 var(--light);
   }
+}
+
+button.fullscreen {
+  background: none;
+  outline: none;
+  border: none;
+}
+
+button.fullscreen svg {
+  width: 1.25rem;
+  color: white;
 }

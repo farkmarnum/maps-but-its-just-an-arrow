@@ -1,7 +1,7 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect, useRef, useCallback } from 'preact/hooks'
 import { getDirections } from '../../helpers/api'
-import { getNearestPoint, getArrowAngle } from '../../helpers/math'
+import { getNextPoint, getAngle } from '../../helpers/math'
 import { useSetBgColorOnMount } from '../../helpers/hooks'
 import style from './style.css'
 
@@ -44,22 +44,20 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
     }
   }, [placeId, userLocation, shouldGetDirections])
 
-  const calculateNearestPoint = useCallback(() => {
+  const calculateNextPoint = useCallback(() => {
     if (deviceAngle != null && userLocation && points) {
-      return getNearestPoint(points, userLocation)
+      return getNextPoint(points, userLocation)
     }
     return undefined
   }, [points, deviceAngle, userLocation])
 
-  const nearestPoint = calculateNearestPoint()
+  const nextPoint = calculateNextPoint()
 
   const navigationAngle =
-    userLocation && nearestPoint
-      ? getArrowAngle(userLocation, nearestPoint)
-      : undefined
+    userLocation && nextPoint ? getAngle(userLocation, nextPoint) : undefined
 
-  const arrowAngle =
-    navigationAngle && deviceAngle ? navigationAngle + deviceAngle : undefined
+  const arrowAngle = navigationAngle
+  // navigationAngle && deviceAngle ? navigationAngle + deviceAngle : undefined
 
   return (
     <Fragment>
@@ -74,9 +72,9 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
           </div>
         )}
         {deviceAngle != null && <div>Device direction: {deviceAngle}</div>}
-        {nearestPoint && (
+        {nextPoint && (
           <div>
-            Nearest Point: {nearestPoint[0]}, {nearestPoint[1]}
+            Next Point: {nextPoint[0]}, {nextPoint[1]}
           </div>
         )}
         {arrowAngle && <div>ARROW: {arrowAngle}</div>}

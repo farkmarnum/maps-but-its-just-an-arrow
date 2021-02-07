@@ -1,5 +1,5 @@
 .main {
-  margin-top: 2rem;
+  padding-top: 2rem;
   padding: 1rem;
   opacity: 0.6;
 }
@@ -31,15 +31,18 @@
   --point-width: 12px;
   --line-length: calc(90vw - var(--point-length));
   --line-width: 6px;
-  width: calc(var(--line-length) + var(--point-length));
+  --arrow-length: calc(var(--line-length) + var(--point-length));
+  width: var(--arrow-length);
+  max-width: 90vh;
   top: calc(50vh);
-  left: 5vw;
+  left: calc((100vw - min(var(--arrow-length), 90vh)) / 2);
   margin: auto 0;
 }
 
 .arrow .line {
   margin-top: calc((var(--point-width) + var(--line-width)) / 2);
   width: var(--line-length);
+  max-width: calc(90vh - var(--point-length));
   background: var(--dark);
   height: var(--line-width);
   float: left;

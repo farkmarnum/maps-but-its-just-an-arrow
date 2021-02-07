@@ -4,10 +4,39 @@ import WhereTo from './where-to'
 import Arrow from './arrow'
 import { getSuggestions } from '../helpers/api'
 import { getLocation } from '../helpers/location'
-import LocationPin from './locationPin'
+import LocationIcon from './location-icon'
+import FullscreenIcon from './fullscreen-icon'
 
 const WHERE_TO = 'where-to'
 const ARROW = 'arrow'
+
+const lockOrientation = async () => {
+  try {
+    await screen.orientation.lock('portrait')
+  } catch (err) {
+    if (!(err instanceof DOMException)) {
+      console.error(err)
+    }
+  }
+}
+
+const toggleFullscreen = async () => {
+  try {
+    const elem = document.getElementById('app') as HTMLDivElement
+    if (!document.fullscreenElement) {
+      if (elem && elem.requestFullscreen) {
+        await elem.requestFullscreen()
+        lockOrientation()
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+      }
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 const App: FunctionalComponent = () => {
   const [currentPage, setCurrentPage] = useState(WHERE_TO)
@@ -24,6 +53,7 @@ const App: FunctionalComponent = () => {
 
   useEffect(() => {
     const onSuccess = (pos: Record<string, any>) => {
+      console.log('user location changed!', [pos.coords.latitude, pos.coords.longitude])
       setUserLocation([pos.coords.latitude, pos.coords.longitude])
     }
 
@@ -69,7 +99,14 @@ const App: FunctionalComponent = () => {
 
   return (
     <div id="app">
-      <div className="top-right">{userLocation && <LocationPin />}</div>
+      <div className="top-right">
+        <button className="fullscreen" onClick={toggleFullscreen}>
+          <FullscreenIcon />
+        </button>
+      </div>
+      <div className="bottom-right" style={{ opacity: 0.5 }}>
+        {userLocation && <LocationIcon />}
+      </div>
       {currentPage === WHERE_TO && (
         <WhereTo
           key={WHERE_TO}
