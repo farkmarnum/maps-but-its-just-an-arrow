@@ -44,8 +44,6 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
     }
   }, [placeId, userLocation, shouldGetDirections])
 
-  console.info({ deviceAngle, userLocation, points })
-
   const calculateNearestPoint = useCallback(() => {
     if (deviceAngle != null && userLocation && points) {
       return getNearestPoint(points, userLocation)
