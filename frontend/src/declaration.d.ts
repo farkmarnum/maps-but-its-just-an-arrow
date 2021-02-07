@@ -16,17 +16,13 @@ interface WhereToArgs {
 }
 
 interface ArrowArgs {
-  userLocation: number[] | undefined
+  userLocation: Point | undefined
   placeId: string | undefined
   goBack: () => void
 }
 
 type Point = [number, number]
-interface PointWithData {
-  distance: number
-  point: Point
-  index: number
-}
+type Region = Point[]
 
 // FIXME: this shouldn't be necessary
 interface GeolocationPositionError {

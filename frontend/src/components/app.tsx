@@ -47,9 +47,7 @@ const App: FunctionalComponent = () => {
 
   const [placeId, setPlaceId] = useState<string | undefined>(undefined)
 
-  const [userLocation, setUserLocation] = useState<number[] | undefined>(
-    undefined,
-  )
+  const [userLocation, setUserLocation] = useState<Point | undefined>(undefined)
 
   useEffect(() => {
     const onSuccess = (pos: Record<string, any>) => {
@@ -57,7 +55,10 @@ const App: FunctionalComponent = () => {
         pos.coords.latitude,
         pos.coords.longitude,
       ])
-      setUserLocation([pos.coords.latitude, pos.coords.longitude])
+      setUserLocation([
+        Number(pos.coords.latitude),
+        Number(pos.coords.longitude),
+      ])
     }
 
     const onError = (err: GeolocationPositionError) => {
@@ -100,6 +101,12 @@ const App: FunctionalComponent = () => {
     }
   }, [input])
 
+  const goBack = () => {
+    setCurrentPage(WHERE_TO)
+    setSuggestions([])
+    setPlaceId(undefined)
+  }
+
   return (
     <div id="app">
       <div className="top-right">
@@ -125,11 +132,7 @@ const App: FunctionalComponent = () => {
         <Arrow
           key={ARROW}
           placeId={placeId}
-          goBack={() => {
-            setCurrentPage(WHERE_TO)
-            setSuggestions([])
-            setPlaceId(undefined)
-          }}
+          goBack={goBack}
           userLocation={userLocation}
         />
       )}

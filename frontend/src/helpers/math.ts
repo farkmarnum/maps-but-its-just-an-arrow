@@ -1,28 +1,95 @@
-const DISTANCE_CUTOFF_METERS = 5
+const METERS_PER_DEGREE = 111111 // https://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters
 
-const distance = (one: number[], two: number[]) => {
-  const [lat1, lon1] = one
-  const [lat2, lon2] = two
-  const R = 6378.137 // Radius of earth in KM
-  const dLat = (lat2 * Math.PI) / 180 - (lat1 * Math.PI) / 180
-  const dLon = (lon2 * Math.PI) / 180 - (lon1 * Math.PI) / 180
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2)
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  const d = R * c
-  return d * 1000 // meters
+const EXTENSION_PADDING_IN_METERS = 10
+const EXTENSION_PADDING = EXTENSION_PADDING_IN_METERS / METERS_PER_DEGREE
+
+const SIDE_PADDING_IN_METERS = 30
+const SIDE_PADDING = SIDE_PADDING_IN_METERS / METERS_PER_DEGREE
+
+const isPointContainedInRegion = (point: Point, region: Region): boolean => {
+  const x = point[0]
+  const y = point[1]
+
+  let inside = false
+  for (let i = 0, j = region.length - 1; i < region.length; j = i++) {
+    const xi = region[i][0],
+      yi = region[i][1]
+    const xj = region[j][0],
+      yj = region[j][1]
+
+    const intersect =
+      yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi
+    if (intersect) inside = !inside
+  }
+
+  return inside
 }
 
-const sortByDistance = (a: PointWithData, b: PointWithData) =>
-  a.distance - b.distance
-const sortByIndex = (a: PointWithData, b: PointWithData) => a.index - b.index
+const getRegionForSource = (source: Point): Region => {
+  const [x, y] = source
+  const originPadding = SIDE_PADDING * 2
 
-export const getNextPoint = (points: Point[], origin: number[]): number[] => {
-  console.log('getNextPoint')
+  return [
+    [x - originPadding, y - originPadding],
+    [x - originPadding, y + originPadding],
+    [x + originPadding, y - originPadding],
+    [x + originPadding, y + originPadding],
+  ]
+}
+
+const getRegion = (a: Point, b: Point): Region => {
+  const vectorFromAToB = [b[0] - a[0], b[1] - a[1]]
+  const magnitude = Math.sqrt(
+    Math.pow(vectorFromAToB[0], 2) + Math.pow(vectorFromAToB[1], 2),
+  )
+
+  // The two corners of the region by b
+  const unitVectorFromAToB = [
+    vectorFromAToB[0] / magnitude,
+    vectorFromAToB[1] / magnitude,
+  ]
+
+  const bExtended: Point = [
+    b[0] + unitVectorFromAToB[0] * EXTENSION_PADDING,
+    b[1] + unitVectorFromAToB[1] * EXTENSION_PADDING,
+  ]
+
+  const bCorner1: Point = [
+    bExtended[0] + unitVectorFromAToB[1] * SIDE_PADDING,
+    bExtended[1] + -unitVectorFromAToB[0] * SIDE_PADDING,
+  ]
+  const bCorner2: Point = [
+    bExtended[0] + -unitVectorFromAToB[1] * SIDE_PADDING,
+    bExtended[1] + unitVectorFromAToB[0] * SIDE_PADDING,
+  ]
+
+  // The two corners of the region by a
+  const unitVectorFromBToA = [
+    -vectorFromAToB[0] / magnitude,
+    -vectorFromAToB[1] / magnitude,
+  ]
+
+  const aExtended: Point = [
+    a[0] + unitVectorFromBToA[0] * EXTENSION_PADDING,
+    a[1] + unitVectorFromBToA[1] * EXTENSION_PADDING,
+  ]
+
+  const aCorner1: Point = [
+    aExtended[0] + unitVectorFromBToA[1] * SIDE_PADDING,
+    aExtended[1] + -unitVectorFromBToA[0] * SIDE_PADDING,
+  ]
+  const aCorner2: Point = [
+    aExtended[0] + -unitVectorFromBToA[1] * SIDE_PADDING,
+    aExtended[1] + unitVectorFromBToA[0] * SIDE_PADDING,
+  ]
+
+  return [bCorner1, bExtended, bCorner2, aCorner1, aExtended, aCorner2]
+}
+
+export const getNextPoint = (
+  points: Point[],
+  origin: Point,
+): number[] | undefined => {
   if (points.length == 0) {
     throw new Error('No points on route!')
   }
@@ -30,46 +97,29 @@ export const getNextPoint = (points: Point[], origin: number[]): number[] => {
     return points.slice(-1)[0]
   }
 
-  const pointsWithData: PointWithData[] = []
+  const regions = points.map((point, i) => {
+    const pointIsSource = i === 0
 
-  points.forEach((point, index) => {
-    const dist = distance(origin, point)
-    pointsWithData.push({ distance: dist, point, index })
+    if (pointIsSource) {
+      return { point, region: getRegionForSource(point), i }
+    }
+
+    const previousPointInRoute = points[i - 1]
+    return {
+      point,
+      region: getRegion(point, previousPointInRoute),
+      i,
+    }
   })
+  const containingRegions = regions
+    .filter(({ region }) => isPointContainedInRegion(origin, region))
+    .sort((a, b) => (a.i > b.i ? 1 : -1))
 
-  pointsWithData.sort(sortByDistance)
-  const closestThreePoints = pointsWithData.slice(0, 3)
-  /*
-   * Edge case: If the user is sitting right on point0, the 0th point will be filtered out due to being too close, and then closestTwoPointsFiltered would look like this:
-   * [
-   *   [20, <point1>, 1],
-   *   [40, <point2>, 2],
-   * ]
-   *
-   * In this case we want to nav towards point1, since it's the best near point, but we'll then end up with point2 instead.
-   * So if closestThreePoints has indices 0, 1, and 2, and dist0 < DISTANCE_CUTOFF_METERS, nextPoint = closestThreePoints[1].point
-   *
-   * Otherwise, we throw out any points that are too close, narrow it down to 2 points, and then navigate towards whichever is further down the route (whichever has a greater index)
-   * ]
-   */
-  const indices = closestThreePoints.map(({ index }) => index)
-  if (
-    indices.includes(0) &&
-    indices.includes(1) &&
-    indices.includes(2) &&
-    closestThreePoints[0].distance < DISTANCE_CUTOFF_METERS
-  ) {
-    return closestThreePoints[1].point
-  }
-  const closestThreePointsFiltered = closestThreePoints.filter(
-    ({ distance: dist }) => dist > DISTANCE_CUTOFF_METERS,
-  )
+  console.log(containingRegions.map(({ i }) => i))
 
-  const closestPointsSortedByIndex = closestThreePointsFiltered
-  closestPointsSortedByIndex.sort(sortByIndex)
+  const nextPointData = containingRegions.slice(-1)[0]
 
-  const nextPointData = closestPointsSortedByIndex.slice(-1)[0]
-  return nextPointData.point
+  return nextPointData?.point
 }
 
 export const getAngle = (origin: number[], dest: number[]): number => {
