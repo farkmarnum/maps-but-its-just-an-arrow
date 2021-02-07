@@ -2,7 +2,7 @@
 
 ## wat
 
-Ever use Google Maps / Apple Maps / Mapquest / Bing-me-there (idk) and think to yourself,
+Have you ever used Google Maps / Apple Maps / Mapquest / Bing-me-there (idk) and thought:
 
 > This is too complicated! All these complicated squiggly lines and colors... all I need is an arrow telling me which way to go!
 
