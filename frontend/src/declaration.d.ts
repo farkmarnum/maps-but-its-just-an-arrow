@@ -19,7 +19,6 @@ interface ArrowArgs {
   userLocation: Point | undefined
   placeId: string | undefined
   goBack: () => void
-  deviceAngle: number | undefined
 }
 
 type Point = [number, number]

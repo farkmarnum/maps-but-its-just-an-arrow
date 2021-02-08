@@ -26,7 +26,7 @@
   font-style: italic;
 }
 
-.main button {
+.suggestions button {
   padding: 0.5rem;
   display: block;
   color: var(--dark);

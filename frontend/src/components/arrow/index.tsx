@@ -8,16 +8,47 @@ import {
 } from '../../helpers/math'
 import { useSetBgColorOnMount } from '../../helpers/hooks'
 import style from './style.css'
+import BackIcon from '../back-icon'
+
+const isDev = location.hostname === 'localhost'
 
 const RECALC_COOLDOWN = 5000
 
-const Arrow = ({
-  placeId,
-  userLocation,
-  goBack,
-  deviceAngle,
-}: ArrowArgs): JSX.Element => {
+const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
+  const [deviceAngle, setDeviceAngle] = useState<number | undefined>(undefined)
   const [points, setPoints] = useState<Point[] | undefined>(undefined)
+
+  const handleDeviceOrientationChange = (event: DeviceOrientationEvent) => {
+    if (event.absolute || isDev) {
+      setDeviceAngle(event.alpha ?? undefined)
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener(
+      'deviceorientationabsolute',
+      handleDeviceOrientationChange,
+      false,
+    )
+    window.addEventListener(
+      'deviceorientation',
+      handleDeviceOrientationChange,
+      false,
+    )
+
+    return () => {
+      window.removeEventListener(
+        'deviceorientationabsolute',
+        handleDeviceOrientationChange,
+        false,
+      )
+      window.removeEventListener(
+        'deviceorientation',
+        handleDeviceOrientationChange,
+        false,
+      )
+    }
+  }, [])
 
   // Set bg color
   useSetBgColorOnMount('var(--blue)')
@@ -73,7 +104,9 @@ const Arrow = ({
   return (
     <Fragment>
       <div className={style.close}>
-        <button onClick={goBack}>&times;</button>
+        <button onClick={goBack}>
+          <BackIcon />
+        </button>
       </div>
       <div
         class={style.arrow}

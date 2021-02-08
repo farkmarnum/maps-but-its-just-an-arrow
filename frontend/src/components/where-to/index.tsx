@@ -36,6 +36,28 @@ const WhereTo = ({
     placeholder.current =
       placeholders[Math.floor(Math.random() * (placeholders.length - 1))]
   }, [])
+
+  const setPlaceAndProceed = (placeId: string) => {
+    setPlaceId(placeId)
+    goToArrow()
+  }
+
+  const handleSuggestionClick = (placeId: string) => {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then((permissionState) => {
+          if (permissionState === 'granted') {
+            setPlaceAndProceed(placeId)
+          } else {
+            toastr.error('Device orientation permission required!')
+          }
+        })
+        .catch(console.error)
+    } else {
+      setPlaceAndProceed(placeId)
+    }
+  }
+
   return (
     <div class={style.main}>
       <h1>where???????</h1>
@@ -53,10 +75,7 @@ const WhereTo = ({
           {suggestions.map(({ description, place_id: placeId }) => (
             <button
               key={placeId}
-              onClick={() => {
-                setPlaceId(placeId)
-                goToArrow()
-              }}
+              onClick={() => handleSuggestionClick(placeId)}
             >
               {description}
             </button>

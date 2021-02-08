@@ -9,8 +9,6 @@ import FullscreenIcon from './fullscreen-icon'
 const WHERE_TO = 'where-to'
 const ARROW = 'arrow'
 
-const isDev = location.hostname === 'localhost'
-
 const lockOrientation = async () => {
   try {
     await screen.orientation.lock('portrait')
@@ -45,17 +43,10 @@ const App: FunctionalComponent = () => {
   const [suggestions, setSuggestions] = useState<Suggestion[] | undefined>(
     undefined,
   )
-  const [deviceAngle, setDeviceAngle] = useState<number | undefined>(undefined)
 
   const [placeId, setPlaceId] = useState<string | undefined>(undefined)
 
   const [userLocation, setUserLocation] = useState<Point | undefined>(undefined)
-
-  const handleDeviceOrientationChange = (event: DeviceOrientationEvent) => {
-    if (event.absolute || isDev) {
-      setDeviceAngle(event.alpha ?? undefined)
-    }
-  }
 
   useEffect(() => {
     const onSuccess = (pos: Record<string, any>) => {
@@ -81,29 +72,7 @@ const App: FunctionalComponent = () => {
       })
       .catch(console.error)
 
-    window.addEventListener(
-      'deviceorientationabsolute',
-      handleDeviceOrientationChange,
-      false,
-    )
-    window.addEventListener(
-      'deviceorientation',
-      handleDeviceOrientationChange,
-      false,
-    )
-
     return () => {
-      window.removeEventListener(
-        'deviceorientationabsolute',
-        handleDeviceOrientationChange,
-        false,
-      )
-      window.removeEventListener(
-        'deviceorientation',
-        handleDeviceOrientationChange,
-        false,
-      )
-
       if (locationWatcher !== undefined) {
         navigator.geolocation.clearWatch(locationWatcher)
       }
@@ -131,12 +100,17 @@ const App: FunctionalComponent = () => {
     setPlaceId(undefined)
   }
 
+  const isFullscreenSupported = () =>
+    typeof document.body.requestFullscreen !== 'undefined'
+
   return (
     <div id="app">
       <div className="top-right">
-        <button className="fullscreen" onClick={toggleFullscreen}>
-          <FullscreenIcon />
-        </button>
+        {isFullscreenSupported() && (
+          <button className="fullscreen" onClick={toggleFullscreen}>
+            <FullscreenIcon />
+          </button>
+        )}
       </div>
       {currentPage === WHERE_TO && (
         <WhereTo
@@ -149,12 +123,7 @@ const App: FunctionalComponent = () => {
         />
       )}
       {currentPage === ARROW && (
-        <Arrow
-          placeId={placeId}
-          goBack={goBack}
-          userLocation={userLocation}
-          deviceAngle={deviceAngle}
-        />
+        <Arrow placeId={placeId} goBack={goBack} userLocation={userLocation} />
       )}
     </div>
   )
