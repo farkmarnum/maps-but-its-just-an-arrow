@@ -44,10 +44,17 @@ const App: FunctionalComponent = () => {
   const [suggestions, setSuggestions] = useState<Suggestion[] | undefined>(
     undefined,
   )
+  const [deviceAngle, setDeviceAngle] = useState<number | undefined>(undefined)
 
   const [placeId, setPlaceId] = useState<string | undefined>(undefined)
 
   const [userLocation, setUserLocation] = useState<Point | undefined>(undefined)
+
+  const handleDeviceOrientationChange = (event: DeviceOrientationEvent) => {
+    if (event.absolute) {
+      setDeviceAngle(event.alpha ?? undefined)
+    }
+  }
 
   useEffect(() => {
     const onSuccess = (pos: Record<string, any>) => {
@@ -73,7 +80,29 @@ const App: FunctionalComponent = () => {
       })
       .catch((err) => console.error(err))
 
+    window.addEventListener(
+      'deviceorientationabsolute',
+      handleDeviceOrientationChange,
+      false,
+    )
+    window.addEventListener(
+      'deviceorientation',
+      handleDeviceOrientationChange,
+      false,
+    )
+
     return () => {
+      window.removeEventListener(
+        'deviceorientationabsolute',
+        handleDeviceOrientationChange,
+        false,
+      )
+      window.removeEventListener(
+        'deviceorientation',
+        handleDeviceOrientationChange,
+        false,
+      )
+
       if (locationWatcher !== undefined) {
         navigator.geolocation.clearWatch(locationWatcher)
       }
@@ -115,7 +144,6 @@ const App: FunctionalComponent = () => {
       </div>
       {currentPage === WHERE_TO && (
         <WhereTo
-          key={WHERE_TO}
           setInput={setInput}
           suggestions={suggestions}
           setPlaceId={setPlaceId}
@@ -126,10 +154,10 @@ const App: FunctionalComponent = () => {
       )}
       {currentPage === ARROW && (
         <Arrow
-          key={ARROW}
           placeId={placeId}
           goBack={goBack}
           userLocation={userLocation}
+          deviceAngle={deviceAngle}
         />
       )}
     </div>

@@ -19,12 +19,13 @@ interface ArrowArgs {
   userLocation: Point | undefined
   placeId: string | undefined
   goBack: () => void
+  deviceAngle: number | undefined
 }
 
 type Point = [number, number]
 type Region = Point[]
 
-// FIXME: this shouldn't be necessary
+// FIXME: this shouldn't be needed
 interface GeolocationPositionError {
   code: number
   message: string

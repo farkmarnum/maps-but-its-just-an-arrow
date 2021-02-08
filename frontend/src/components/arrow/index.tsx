@@ -5,25 +5,13 @@ import { getNextPoint, getAngle } from '../../helpers/math'
 import { useSetBgColorOnMount } from '../../helpers/hooks'
 import style from './style.css'
 
-const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
-  const [deviceAngle, setDeviceAngle] = useState<number | undefined>(undefined)
+const Arrow = ({
+  placeId,
+  userLocation,
+  goBack,
+  deviceAngle,
+}: ArrowArgs): JSX.Element => {
   const [points, setPoints] = useState<Point[] | undefined>(undefined)
-
-  const handleOrientationChange = (evt: DeviceOrientationEvent) => {
-    setDeviceAngle(evt.alpha ?? undefined)
-  }
-
-  // Listen for device orientation changes
-  useEffect(() => {
-    window.addEventListener('deviceorientation', handleOrientationChange, true)
-    return () => {
-      window.removeEventListener(
-        'deviceorientation',
-        handleOrientationChange,
-        true,
-      )
-    }
-  })
 
   // Set bg color
   useSetBgColorOnMount('var(--blue)')
@@ -75,7 +63,7 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
       <div className={style.reload}>
         <button onClick={getDirectionsAndSetPoints}>&#x21bb;</button>
       </div>
-      <div className={style.main} style={{ display: 'none' }}>
+      <div className={style.main}>
         {!userLocation && 'Loading GPS...'}
         {userLocation && (
           <div>
@@ -93,7 +81,7 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
       <div
         class={style.arrow}
         style={{
-          transform: `rotate(${arrowAngle}deg)`,
+          transform: `rotateZ(${arrowAngle}deg)`,
           display: arrowAngle != null ? 'block' : 'none',
         }}
       >

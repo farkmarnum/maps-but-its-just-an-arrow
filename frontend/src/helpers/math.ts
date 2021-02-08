@@ -1,9 +1,9 @@
 const METERS_PER_DEGREE = 111111 // https://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters
 
-const EXTENSION_PADDING_IN_METERS = 10
+const EXTENSION_PADDING_IN_METERS = 15
 const EXTENSION_PADDING = EXTENSION_PADDING_IN_METERS / METERS_PER_DEGREE
 
-const SIDE_PADDING_IN_METERS = 30
+const SIDE_PADDING_IN_METERS = 40
 const SIDE_PADDING = SIDE_PADDING_IN_METERS / METERS_PER_DEGREE
 
 const isPointContainedInRegion = (point: Point, region: Region): boolean => {
@@ -27,7 +27,7 @@ const isPointContainedInRegion = (point: Point, region: Region): boolean => {
 
 const getRegionForSource = (source: Point): Region => {
   const [x, y] = source
-  const originPadding = SIDE_PADDING * 2
+  const originPadding = SIDE_PADDING * 3
 
   return [
     [x - originPadding, y - originPadding],
