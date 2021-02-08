@@ -86,7 +86,7 @@ const getRegion = (a: Point, b: Point): Region => {
   return [bCorner1, bExtended, bCorner2, aCorner1, aExtended, aCorner2]
 }
 
-export const getNextPoint = (
+export const getNextPointUsingRegions = (
   points: Point[],
   origin: Point,
 ): number[] | undefined => {
@@ -118,6 +118,48 @@ export const getNextPoint = (
   const nextPointData = containingRegions.slice(-1)[0]
 
   return nextPointData?.point
+}
+
+const getDistance = (one: Point, two: Point) => {
+  const [lat1, lon1] = one
+  const [lat2, lon2] = two
+  const R = 6378.137 // Radius of earth in KM
+  const dLat = (lat2 * Math.PI) / 180 - (lat1 * Math.PI) / 180
+  const dLon = (lon2 * Math.PI) / 180 - (lon1 * Math.PI) / 180
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  const d = R * c
+  return d * 1000 // meters
+}
+
+export const getNearestPoint = (
+  points: Point[],
+  origin: Point,
+): number[] | undefined => {
+  if (points.length == 0) {
+    throw new Error('No points on route!')
+  }
+  if (points.length < 3) {
+    return points.slice(-1)[0]
+  }
+
+  let nearestPoint: Point | undefined
+  let nearestPointDistance = Infinity
+
+  points.forEach((point) => {
+    const dist = getDistance(origin, point)
+    if (dist < nearestPointDistance) {
+      nearestPointDistance = dist
+      nearestPoint = point
+    }
+  })
+
+  return nearestPoint
 }
 
 export const getAngle = (origin: number[], dest: number[]): number => {

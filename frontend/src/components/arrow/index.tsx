@@ -1,11 +1,15 @@
 import { h, Fragment } from 'preact'
-import { useState, useEffect, useRef, useCallback } from 'preact/hooks'
+import { useState, useEffect, useCallback } from 'preact/hooks'
 import { getDirections } from '../../helpers/api'
-import { getNextPoint, getAngle } from '../../helpers/math'
+import {
+  getNextPointUsingRegions,
+  getNearestPoint,
+  getAngle,
+} from '../../helpers/math'
 import { useSetBgColorOnMount } from '../../helpers/hooks'
 import style from './style.css'
 
-const DIRECTIONS_COOLDOWN = 1000
+const RECALC_COOLDOWN = 5000
 
 const Arrow = ({
   placeId,
@@ -14,7 +18,6 @@ const Arrow = ({
   deviceAngle,
 }: ArrowArgs): JSX.Element => {
   const [points, setPoints] = useState<Point[] | undefined>(undefined)
-  const getDirectionsWasRecentlyCalled = useRef(false)
 
   // Set bg color
   useSetBgColorOnMount('var(--blue)')
@@ -34,19 +37,27 @@ const Arrow = ({
   }, [placeId, userLocation])
 
   useEffect(() => {
-    if (!nextPoint && !getDirectionsWasRecentlyCalled.current) {
+    if (!points) {
       getDirectionsAndSetPoints()
-      getDirectionsWasRecentlyCalled.current = true
-      setTimeout(() => {
-        getDirectionsWasRecentlyCalled.current = false
-      }, DIRECTIONS_COOLDOWN)
     }
-  }, [getDirectionsAndSetPoints, points, getDirectionsWasRecentlyCalled])
+  }, [getDirectionsAndSetPoints, points])
 
+  const [recalculateIsDisabled, setRecalculateIsDisabled] = useState(false)
+  const recalculate = () => {
+    if (!recalculateIsDisabled) {
+      setRecalculateIsDisabled(true)
+      getDirectionsAndSetPoints()
+      setTimeout(() => {
+        setRecalculateIsDisabled(false)
+      }, RECALC_COOLDOWN)
+    }
+  }
   const calculateNextPoint = useCallback(() => {
     if (deviceAngle != null && userLocation && points) {
-      const nextPoint = getNextPoint(points, userLocation)
-      return nextPoint
+      return (
+        getNextPointUsingRegions(points, userLocation) ||
+        getNearestPoint(points, userLocation)
+      )
     }
     return undefined
   }, [points, deviceAngle, userLocation])
@@ -73,6 +84,11 @@ const Arrow = ({
       >
         <div class={style.line} />
         <div class={style.point} />
+      </div>
+      <div className={style.recalculate}>
+        <button disabled={recalculateIsDisabled} onClick={recalculate}>
+          &#x21bb;
+        </button>
       </div>
     </Fragment>
   )
