@@ -29,7 +29,6 @@ RUN yarn install --production --silent \
 FROM base as build
 WORKDIR /usr/src/app
 COPY ./ .
-COPY ./.env .
 
 RUN yarn add typescript --dev && yarn build
 
@@ -40,5 +39,6 @@ FROM dependencies AS release
 WORKDIR /usr/src/app
 
 COPY --from=build /usr/src/app/build .
+COPY ./.env .
 
 CMD ["node", "src/server.js"]
