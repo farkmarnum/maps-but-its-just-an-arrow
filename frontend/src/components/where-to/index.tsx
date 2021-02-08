@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useEffect, useState, useRef } from 'preact/hooks'
 import { useDebouncedCallback } from 'use-debounce'
 import { useSetBgColorOnMount } from '../../helpers/hooks'
 import style from './style.css'
@@ -16,9 +16,6 @@ const placeholders = [
   'get ready for some stupid nav',
 ]
 
-const placeholder =
-  placeholders[Math.floor(Math.random() * (placeholders.length - 1))]
-
 const WhereTo = ({
   setInput,
   suggestions,
@@ -32,6 +29,11 @@ const WhereTo = ({
 
   useSetBgColorOnMount('var(--green)')
 
+  const placeholder = useRef('')
+  useEffect(() => {
+    placeholder.current =
+      placeholders[Math.floor(Math.random() * (placeholders.length - 1))]
+  }, [])
   return (
     <div class={style.main}>
       <h1>where???????</h1>
@@ -42,7 +44,7 @@ const WhereTo = ({
           setInputInner(target.value)
           setInputDebounced.callback(target.value)
         }}
-        placeholder={placeholder}
+        placeholder={placeholder.current}
       />
       {suggestions && (
         <div className={style.suggestions}>

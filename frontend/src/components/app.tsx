@@ -9,7 +9,7 @@ import FullscreenIcon from './fullscreen-icon'
 const WHERE_TO = 'where-to'
 const ARROW = 'arrow'
 
-const isDev = location.hostname === "localhost"
+const isDev = location.hostname === 'localhost'
 
 const lockOrientation = async () => {
   try {
