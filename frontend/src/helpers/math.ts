@@ -3,7 +3,7 @@ const METERS_PER_DEGREE = 111111 // https://gis.stackexchange.com/questions/2951
 const EXTENSION_PADDING_IN_METERS = 15
 const EXTENSION_PADDING = EXTENSION_PADDING_IN_METERS / METERS_PER_DEGREE
 
-const SIDE_PADDING_IN_METERS = 40
+const SIDE_PADDING_IN_METERS = 30
 const SIDE_PADDING = SIDE_PADDING_IN_METERS / METERS_PER_DEGREE
 
 const isPointContainedInRegion = (point: Point, region: Region): boolean => {
