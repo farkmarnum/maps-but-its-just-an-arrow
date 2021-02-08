@@ -10,6 +10,7 @@ import {
 import { useSetBgColorOnMount } from '../../helpers/hooks'
 import style from './style.css'
 import BackIcon from '../back-icon'
+import InfoIcon from '../info-icon'
 
 const isDev = location.hostname === 'localhost'
 
@@ -30,6 +31,20 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
 
     if (angle !== undefined) {
       setDeviceAngle(angle)
+    }
+  }
+
+  let timeout: NodeJS.Timeout | undefined
+
+  const [recalculateIsDisabled, setRecalculateIsDisabled] = useState(false)
+  const recalculate = () => {
+    if (!recalculateIsDisabled) {
+      setRecalculateIsDisabled(true)
+      getDirectionsAndSetPoints()
+      timeout = setTimeout(() => {
+        setRecalculateIsDisabled(false)
+        timeout = undefined
+      }, RECALC_COOLDOWN)
     }
   }
 
@@ -56,6 +71,10 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
         handleDeviceOrientationChange,
         true,
       )
+
+      if (timeout) {
+        clearTimeout(timeout)
+      }
     }
   }, [])
 
@@ -82,16 +101,6 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
     }
   }, [getDirectionsAndSetPoints, points])
 
-  const [recalculateIsDisabled, setRecalculateIsDisabled] = useState(false)
-  const recalculate = () => {
-    if (!recalculateIsDisabled) {
-      setRecalculateIsDisabled(true)
-      getDirectionsAndSetPoints()
-      setTimeout(() => {
-        setRecalculateIsDisabled(false)
-      }, RECALC_COOLDOWN)
-    }
-  }
   const calculateNextPoint = useCallback(() => {
     if (deviceAngle != null && userLocation && points) {
       return (
@@ -110,9 +119,13 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
   const arrowAngle =
     navigationAngle && deviceAngle ? navigationAngle + deviceAngle : undefined
 
+  const showInfo = () => {
+    // TODO
+  }
+
   return (
     <Fragment>
-      <div className={style.close}>
+      <div className={style.back}>
         <button onClick={goBack}>
           <BackIcon />
         </button>
@@ -140,6 +153,11 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
       <div className={style.recalculate}>
         <button disabled={recalculateIsDisabled} onClick={recalculate}>
           &#x21bb;
+        </button>
+      </div>
+      <div className={style.info}>
+        <button onClick={showInfo}>
+          <InfoIcon />
         </button>
       </div>
     </Fragment>

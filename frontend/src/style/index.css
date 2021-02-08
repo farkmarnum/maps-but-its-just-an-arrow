@@ -43,7 +43,6 @@ html, body {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  text-align: right;
   z-index: 10;
 }
 

@@ -8,45 +8,64 @@
   opacity: 0.35;
 }
 
-.close {
+.back,
+.info,
+.recalculate {
   position: absolute;
-  top: 1rem;
-  left: 0.75rem;
   z-index: 10;
 }
-.close button {
+
+.back button,
+.info button,
+.recalculate button {
   background: none;
   border: none;
   outline: none;
   z-index: 10;
   padding: 0;
 }
-.close button svg {
+
+.back {
+  top: 1rem;
+  left: 1rem;
+}
+
+.back button svg {
   stroke: var(--light);
   fill: var(--light);
   width: 1.5rem;
-  stroke-width: 2px;
+  stroke-width: 3px;
 }
 
 .recalculate {
-  position: fixed;
-  bottom: 0.5rem;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  z-index: 10;
+  bottom: 1rem;
+  left: 1rem;
 }
 .recalculate button {
-  background: none;
-  border: none;
-  outline: none;
   color: var(--light);
   font-weight: normal;
   font-size: 2.5rem;
-  z-index: 10;
-  line-height: 0.75;
+  line-height: 0;
   opacity: 1;
 }
+
+.info {
+  bottom: 1rem;
+  right: 1rem;
+}
+
+.info button {
+  color: var(--light);
+  font-size: 2rem;
+  line-height: 0;
+}
+
+.info button svg {
+  stroke: var(--light);
+  fill: var(--light);
+  width: 1.5rem;
+}
+
 
 .recalculate button[disabled] {
   opacity: 0.5;

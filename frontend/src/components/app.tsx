@@ -5,6 +5,7 @@ import Arrow from './arrow'
 import { getSuggestions } from '../helpers/api'
 import { getLocation } from '../helpers/location'
 import FullscreenIcon from './fullscreen-icon'
+import CloseFullscreenIcon from './close-fullscreen-icon'
 
 const WHERE_TO = 'where-to'
 const ARROW = 'arrow'
@@ -47,6 +48,25 @@ const App: FunctionalComponent = () => {
   const [placeId, setPlaceId] = useState<string | undefined>(undefined)
 
   const [userLocation, setUserLocation] = useState<Point | undefined>(undefined)
+
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  const handleFullscreenChange = () => {
+    setIsFullscreen(document.fullscreenElement != null)
+  }
+
+  useEffect(() => {
+    document.addEventListener('fullscreenchange', handleFullscreenChange, true)
+    handleFullscreenChange()
+
+    return () => {
+      document.removeEventListener(
+        'fullscreenchange',
+        handleFullscreenChange,
+        true,
+      )
+    }
+  }, [])
 
   useEffect(() => {
     const onSuccess = (pos: Record<string, any>) => {
@@ -109,7 +129,11 @@ const App: FunctionalComponent = () => {
       <div className="top-right">
         {isFullscreenSupported() && (
           <button className="fullscreen" onClick={toggleFullscreen}>
-            <FullscreenIcon />
+            {isFullscreen ? (
+              <CloseFullscreenIcon key="close-fullscreen" />
+            ) : (
+              <FullscreenIcon key="open-fullscreen" />
+            )}
           </button>
         )}
       </div>
