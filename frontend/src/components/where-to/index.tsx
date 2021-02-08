@@ -4,7 +4,7 @@ import { useDebouncedCallback } from 'use-debounce'
 import { useSetBgColorOnMount } from '../../helpers/hooks'
 import style from './style.css'
 
-const DEBOUNCE_DELAY_MS = 100
+const DEBOUNCE_DELAY_MS = 250
 
 const placeholders = [
   'tell us tell us tell us',
@@ -14,6 +14,8 @@ const placeholders = [
   'you gotta type here. type it in!',
   'type here & the arrow will guide you',
   'get ready for some stupid nav',
+  'where. are. you. going.',
+  'you need to type something in here or nothing will happen',
 ]
 
 const WhereTo = ({
