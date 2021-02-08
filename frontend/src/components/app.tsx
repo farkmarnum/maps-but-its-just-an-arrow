@@ -101,6 +101,7 @@ const App: FunctionalComponent = () => {
   }
 
   const isFullscreenSupported = () =>
+    typeof window !== 'undefined' &&
     typeof document.body.requestFullscreen !== 'undefined'
 
   return (
