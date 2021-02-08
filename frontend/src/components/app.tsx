@@ -6,6 +6,8 @@ import { getSuggestions } from '../helpers/api'
 import { getLocation } from '../helpers/location'
 import FullscreenIcon from './fullscreen-icon'
 import CloseFullscreenIcon from './close-fullscreen-icon'
+import InfoModal from './info-modal'
+import InfoIcon from './info-icon'
 
 const WHERE_TO = 'where-to'
 const ARROW = 'arrow'
@@ -44,6 +46,8 @@ const App: FunctionalComponent = () => {
   const [suggestions, setSuggestions] = useState<Suggestion[] | undefined>(
     undefined,
   )
+
+  const [infoIsShown, setInfoIsShown] = useState(false)
 
   const [placeId, setPlaceId] = useState<string | undefined>(undefined)
 
@@ -150,6 +154,17 @@ const App: FunctionalComponent = () => {
       {currentPage === ARROW && (
         <Arrow placeId={placeId} goBack={goBack} userLocation={userLocation} />
       )}
+
+      <div className="info">
+        <button
+          onClick={() => {
+            setInfoIsShown(true)
+          }}
+        >
+          <InfoIcon />
+        </button>
+      </div>
+      <InfoModal infoIsShown={infoIsShown} setInfoIsShown={setInfoIsShown} />
     </div>
   )
 }

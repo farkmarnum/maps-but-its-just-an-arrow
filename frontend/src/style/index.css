@@ -97,3 +97,26 @@ button.fullscreen svg {
   width: 1.25rem;
   color: var(--light);
 }
+
+.info {
+  position: absolute;
+  z-index: 10;
+  bottom: 1rem;
+  right: 1rem;
+}
+
+.info button {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  color: var(--light);
+  font-size: 2rem;
+  line-height: 0;
+}
+
+.info button svg {
+  stroke: var(--light);
+  fill: var(--light);
+  width: 1.5rem;
+}

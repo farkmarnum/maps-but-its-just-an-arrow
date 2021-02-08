@@ -9,14 +9,12 @@
 }
 
 .back,
-.info,
 .recalculate {
   position: absolute;
   z-index: 10;
 }
 
 .back button,
-.info button,
 .recalculate button {
   background: none;
   border: none;
@@ -47,24 +45,6 @@
   line-height: 0;
   opacity: 1;
 }
-
-.info {
-  bottom: 1rem;
-  right: 1rem;
-}
-
-.info button {
-  color: var(--light);
-  font-size: 2rem;
-  line-height: 0;
-}
-
-.info button svg {
-  stroke: var(--light);
-  fill: var(--light);
-  width: 1.5rem;
-}
-
 
 .recalculate button[disabled] {
   opacity: 0.5;
@@ -106,37 +86,4 @@
   border-bottom: var(--point-width) solid transparent;
   border-left: var(--point-length) solid var(--dark);
   float: right;
-}
-
-.infoOverlay {
-  position: absolute;
-  padding: 5rem 2rem 2rem;
-  top: 0;
-  height: 100vh;
-  left: 0;
-  width: 100vw;
-  z-index: 999;
-  background: var(--light);
-  display: none;
-}
-
-.infoOverlay .close {
-  position: absolute;
-  z-index: 1010;
-  top: 0.5rem;
-  left: 0;
-  width: 100%;
-}
-
-.infoOverlay .close button {
-  background: none;
-  border: none;
-  outline: none;
-  padding: 0;
-  color: var(--dark);
-  font-weight: normal;
-  font-size: 2.5rem;
-  display: block;
-  margin: 0 auto;
-  line-height: 1;
 }

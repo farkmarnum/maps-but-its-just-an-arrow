@@ -8,20 +8,26 @@ import {
   getDistance,
 } from '../../helpers/math'
 import { useSetBgColorOnMount } from '../../helpers/hooks'
-import style from './style.css'
 import BackIcon from '../back-icon'
-import InfoIcon from '../info-icon'
+import style from './style.css'
 
 const isDev = location.hostname === 'localhost'
 
 const RECALC_COOLDOWN = 5000
 
+interface DeviceOrientationEventCrossBrowser {
+  alpha: number | null
+  absolute: boolean
+  webkitCompassHeading?: number
+}
+
 const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
   const [deviceAngle, setDeviceAngle] = useState<number | undefined>(undefined)
   const [points, setPoints] = useState<Point[] | undefined>(undefined)
-  const [infoIsShown, setInfoIsShown] = useState(false)
 
-  const handleDeviceOrientationChange = (event: any) => {
+  const handleDeviceOrientationChange = (
+    event: DeviceOrientationEventCrossBrowser,
+  ) => {
     let angle: number | undefined = undefined
 
     if (event.webkitCompassHeading) {
@@ -152,59 +158,6 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
         <button disabled={recalculateIsDisabled} onClick={recalculate}>
           &#x21bb;
         </button>
-      </div>
-      <div className={style.info}>
-        <button
-          onClick={() => {
-            setInfoIsShown(true)
-          }}
-        >
-          <InfoIcon />
-        </button>
-      </div>
-      <div
-        className={style.infoOverlay}
-        style={{
-          display: infoIsShown ? 'block' : 'none',
-        }}
-      >
-        <div className={style.close}>
-          <button
-            onClick={() => {
-              setInfoIsShown(false)
-            }}
-          >
-            ×
-          </button>
-        </div>
-        <h1>Stupid Nav</h1>
-        <p>It's Google Maps, but just an arrow!</p>
-        <p>
-          If the arrow gets too wacky, press &#x21bb; to recalculate the
-          directions.
-        </p>
-        <div style={{ marginTop: '3rem' }}>
-          © Mark Farnum {new Date().getFullYear()}
-        </div>
-        <div className="funding">
-          Like this tool? You can{' '}
-          <a
-            href="https://paypal.me/markfarnum"
-            target="_blank"
-            rel="noreferrer"
-          >
-            chip in
-          </a>{' '}
-          to pay for the server or{' '}
-          <a
-            href="https://github.com/farkmarnum/stupidnav"
-            target="_blank"
-            rel="noreferrer"
-          >
-            contribute
-          </a>{' '}
-          to improve the code.
-        </div>
       </div>
     </Fragment>
   )

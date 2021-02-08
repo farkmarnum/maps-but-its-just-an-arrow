@@ -1,5 +1,5 @@
 .main {
-  padding-top: 3rem;
+  padding-top: 6rem;
 }
 
 .main h1 {
@@ -7,6 +7,7 @@
   text-align: center;
   color: var(--light);
   font-weight: normal;
+  letter-spacing: 3px;
 }
 
 .main input {
