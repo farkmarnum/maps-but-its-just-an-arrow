@@ -80,15 +80,6 @@
   float: left;
   position: relative;
 }
-.arrow .line::after {
-  content: '';
-  width: 1000px;
-  background: var(--dark);
-  height: var(--line-width);
-  position: absolute;
-  top: 0;
-  left: -1000px;
-}
 
 .arrow .point {
   width: 0;
