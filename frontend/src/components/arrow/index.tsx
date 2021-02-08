@@ -28,10 +28,8 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
   // Set bg color
   useSetBgColorOnMount('var(--blue)')
 
-  // If placeId is selected, userLocation is loaded, & directions are needed, get directions:
-  useEffect(() => {
-    if (placeId && userLocation && !points) {
-      console.log('GET DIRECTIONS', placeId, userLocation[0], userLocation[1])
+  const getDirectionsAndSetPoints = useCallback(() => {
+    if (placeId && userLocation) {
       getDirections({
         destinationPlaceId: placeId,
         originLat: userLocation[0],
@@ -44,16 +42,18 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
           console.error(err)
         })
     }
-  }, [placeId, userLocation, points])
+  }, [placeId, userLocation])
+
+  useEffect(() => {
+    if (!points) {
+      getDirectionsAndSetPoints()
+    }
+  }, [getDirectionsAndSetPoints, points])
 
   const calculateNextPoint = useCallback(() => {
-    console.log('calculateNextPoint')
+    // console.log('calculateNextPoint')
     if (deviceAngle != null && userLocation && points) {
       const nextPoint = getNextPoint(points, userLocation)
-      if (!nextPoint) {
-        console.log('NO POINT!')
-        // setPoints(undefined)
-      }
       return nextPoint
     }
     return undefined
@@ -64,13 +64,16 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
   const navigationAngle =
     userLocation && nextPoint ? getAngle(userLocation, nextPoint) : undefined
 
-  const arrowAngle = navigationAngle
-  // navigationAngle && deviceAngle ? navigationAngle + deviceAngle : undefined
+  const arrowAngle =
+    navigationAngle && deviceAngle ? navigationAngle + deviceAngle : undefined
 
   return (
     <Fragment>
       <div className={style.close}>
         <button onClick={goBack}>&times;</button>
+      </div>
+      <div className={style.reload}>
+        <button onClick={getDirectionsAndSetPoints}>&#x21bb;</button>
       </div>
       <div className={style.main} style={{ display: 'none' }}>
         {!userLocation && 'Loading GPS...'}

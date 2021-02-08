@@ -40,7 +40,7 @@ html, body {
   position: absolute;
   top: 0.5rem;
   right: 0.25rem;
-  width: 100%;
+  width: 2rem;
   text-align: right;
 }
 
@@ -48,7 +48,7 @@ html, body {
   position: absolute;
   bottom: 0.5rem;
   right: 0.25rem;
-  width: 100%;
+  width: 2rem;
   text-align: right;
 }
 
