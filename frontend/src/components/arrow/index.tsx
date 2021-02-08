@@ -5,6 +5,7 @@ import {
   getNextPointUsingRegions,
   getNearestPoint,
   getAngle,
+  getDistance,
 } from '../../helpers/math'
 import { useSetBgColorOnMount } from '../../helpers/hooks'
 import style from './style.css'
@@ -14,20 +15,15 @@ const isDev = location.hostname === 'localhost'
 
 const RECALC_COOLDOWN = 5000
 
-interface IosOrientationEvent extends DeviceOrientationEvent {
-  webkitCompassHeading?: number
-}
-
 const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
   const [deviceAngle, setDeviceAngle] = useState<number | undefined>(undefined)
   const [points, setPoints] = useState<Point[] | undefined>(undefined)
 
-  const handleDeviceOrientationChange = (event: DeviceOrientationEvent) => {
+  const handleDeviceOrientationChange = (event: any) => {
     let angle: number | undefined = undefined
 
-    const iosEvent = event as IosOrientationEvent
-    if (iosEvent.webkitCompassHeading) {
-      angle = iosEvent.webkitCompassHeading * -1
+    if (event.webkitCompassHeading) {
+      angle = event.webkitCompassHeading * -1
     } else if (event.absolute || isDev) {
       angle = event.alpha ?? undefined
     }
@@ -41,24 +37,24 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
     window.addEventListener(
       'deviceorientationabsolute',
       handleDeviceOrientationChange,
-      false,
+      true,
     )
     window.addEventListener(
       'deviceorientation',
       handleDeviceOrientationChange,
-      false,
+      true,
     )
 
     return () => {
       window.removeEventListener(
         'deviceorientationabsolute',
         handleDeviceOrientationChange,
-        false,
+        true,
       )
       window.removeEventListener(
         'deviceorientation',
         handleDeviceOrientationChange,
-        false,
+        true,
       )
     }
   }, [])
@@ -120,6 +116,16 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
         <button onClick={goBack}>
           <BackIcon />
         </button>
+      </div>
+      <div className={style.main}>
+        {nextPoint && location.search.includes('debug') && (
+          <div>
+            Next point: [{nextPoint[0]}, {nextPoint[1]}]
+          </div>
+        )}
+        {nextPoint && userLocation && location.search.includes('debug') && (
+          <div>Distance: {getDistance(nextPoint as Point, userLocation)}m</div>
+        )}
       </div>
       <div
         class={style.arrow}

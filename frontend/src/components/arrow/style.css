@@ -54,25 +54,40 @@
 
 .arrow {
   position: fixed;
+  --vw-max: 90vw;
+  --vh-max: 90vh;
+
   --point-length: 30px;
-  --point-width: 12px;
-  --line-length: calc(90vw - var(--point-length));
-  --line-width: 6px;
+  --line-length: calc(var(--vw-max) - var(--point-length));
   --arrow-length: calc(var(--line-length) + var(--point-length));
+
+  --point-width: 12px;
+  --line-width: 6px;
+
   width: var(--arrow-length);
-  max-width: 90vh;
+  max-width: var(--vh-max);
   top: calc(50vh);
-  left: calc((100vw - min(var(--arrow-length), 90vh)) / 2);
+  left: calc((100vw - min(var(--arrow-length), var(--vh-max))) / 2);
   margin: auto 0;
 }
 
 .arrow .line {
   margin-top: calc((var(--point-width) + var(--line-width)) / 2);
   width: var(--line-length);
-  max-width: calc(90vh - var(--point-length));
+  max-width: calc(var(--vh-max) - var(--point-length));
   background: var(--dark);
   height: var(--line-width);
   float: left;
+  position: relative;
+}
+.arrow .line::after {
+  content: '';
+  width: 1000px;
+  background: var(--dark);
+  height: var(--line-width);
+  position: absolute;
+  top: 0;
+  left: -1000px;
 }
 
 .arrow .point {

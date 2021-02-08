@@ -120,7 +120,7 @@ export const getNextPointUsingRegions = (
   return nextPointData?.point
 }
 
-const getDistance = (one: Point, two: Point) => {
+export const getDistance = (one: Point, two: Point): number => {
   const [lat1, lon1] = one
   const [lat2, lon2] = two
   const R = 6378.137 // Radius of earth in KM
