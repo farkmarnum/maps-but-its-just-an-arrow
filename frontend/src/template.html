@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= htmlWebpackPlugin.options.CLI_DATA.preRenderData.GA_TRACKING_ID %>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '<%= htmlWebpackPlugin.options.CLI_DATA.preRenderData.GA_TRACKING_ID %>');
+    </script>
 		<meta charset="utf-8">
-		<title>StupidNav</title>
-    <meta name="description" content="maps, but just a arrow">
+		<title><% preact.title %></title>
+    <meta name="<%= htmlWebpackPlugin.options.CLI_DATA.preRenderData.description %>" content="maps, but just a arrow">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<meta name="mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-capable" content="yes">
