@@ -1,4 +1,6 @@
-# Maps, but it's just an arrow
+# StupidNav
+
+It's maps, but just an arrow.
 
 ## wat
 
