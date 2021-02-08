@@ -29,9 +29,7 @@ const Arrow = ({
         .then((newPoints: Point[]) => {
           setPoints(newPoints)
         })
-        .catch((err) => {
-          console.error(err)
-        })
+        .catch(console.error)
     }
   }, [placeId, userLocation])
 

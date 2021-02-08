@@ -79,7 +79,7 @@ const App: FunctionalComponent = () => {
           onError,
         )
       })
-      .catch((err) => console.error(err))
+      .catch(console.error)
 
     window.addEventListener(
       'deviceorientationabsolute',
@@ -119,9 +119,7 @@ const App: FunctionalComponent = () => {
         .then((newSuggestions: Suggestion[]) => {
           setSuggestions(newSuggestions)
         })
-        .catch((err) => {
-          console.error(err)
-        })
+        .catch(console.error)
     } else {
       setSuggestions([])
     }
