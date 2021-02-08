@@ -14,13 +14,26 @@ const isDev = location.hostname === 'localhost'
 
 const RECALC_COOLDOWN = 5000
 
+interface IosOrientationEvent extends DeviceOrientationEvent {
+  webkitCompassHeading?: number
+}
+
 const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
   const [deviceAngle, setDeviceAngle] = useState<number | undefined>(undefined)
   const [points, setPoints] = useState<Point[] | undefined>(undefined)
 
   const handleDeviceOrientationChange = (event: DeviceOrientationEvent) => {
-    if (event.absolute || isDev) {
-      setDeviceAngle(event.alpha ?? undefined)
+    let angle: number | undefined = undefined
+
+    const iosEvent = event as IosOrientationEvent
+    if (iosEvent.webkitCompassHeading) {
+      angle = iosEvent.webkitCompassHeading * -1
+    } else if (event.absolute || isDev) {
+      angle = event.alpha ?? undefined
+    }
+
+    if (angle !== undefined) {
+      setDeviceAngle(angle)
     }
   }
 
