@@ -37,7 +37,7 @@ export const autocompletePlace = async (
     const params: AutocompletePlaceQueryParams = { input, key }
     if (location) {
       params.location = location
-      params.radius = METERS_IN_ONE_MILE * 2
+      params.radius = METERS_IN_ONE_MILE * 1
     }
     const resp = await client.placeAutocomplete({ params })
     return resp.data.predictions
