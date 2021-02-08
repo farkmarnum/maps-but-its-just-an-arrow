@@ -19,6 +19,7 @@ const RECALC_COOLDOWN = 5000
 const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
   const [deviceAngle, setDeviceAngle] = useState<number | undefined>(undefined)
   const [points, setPoints] = useState<Point[] | undefined>(undefined)
+  const [infoIsShown, setInfoIsShown] = useState(false)
 
   const handleDeviceOrientationChange = (event: any) => {
     let angle: number | undefined = undefined
@@ -34,16 +35,17 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
     }
   }
 
-  let timeout: NodeJS.Timeout | undefined
+  let recalcTimeout: NodeJS.Timeout | undefined
 
   const [recalculateIsDisabled, setRecalculateIsDisabled] = useState(false)
   const recalculate = () => {
     if (!recalculateIsDisabled) {
       setRecalculateIsDisabled(true)
       getDirectionsAndSetPoints()
-      timeout = setTimeout(() => {
+
+      recalcTimeout = setTimeout(() => {
         setRecalculateIsDisabled(false)
-        timeout = undefined
+        recalcTimeout = undefined
       }, RECALC_COOLDOWN)
     }
   }
@@ -72,8 +74,8 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
         true,
       )
 
-      if (timeout) {
-        clearTimeout(timeout)
+      if (recalcTimeout) {
+        clearTimeout(recalcTimeout)
       }
     }
   }, [])
@@ -119,10 +121,6 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
   const arrowAngle =
     navigationAngle && deviceAngle ? navigationAngle + deviceAngle : undefined
 
-  const showInfo = () => {
-    // TODO
-  }
-
   return (
     <Fragment>
       <div className={style.back}>
@@ -156,9 +154,57 @@ const Arrow = ({ placeId, userLocation, goBack }: ArrowArgs): JSX.Element => {
         </button>
       </div>
       <div className={style.info}>
-        <button onClick={showInfo}>
+        <button
+          onClick={() => {
+            setInfoIsShown(true)
+          }}
+        >
           <InfoIcon />
         </button>
+      </div>
+      <div
+        className={style.infoOverlay}
+        style={{
+          display: infoIsShown ? 'block' : 'none',
+        }}
+      >
+        <div className={style.close}>
+          <button
+            onClick={() => {
+              setInfoIsShown(false)
+            }}
+          >
+            ×
+          </button>
+        </div>
+        <h1>Stupid Nav</h1>
+        <p>It's Google Maps, but just an arrow!</p>
+        <p>
+          If the arrow gets too wacky, press &#x21bb; to recalculate the
+          directions.
+        </p>
+        <div style={{ marginTop: '3rem' }}>
+          © Mark Farnum {new Date().getFullYear()}
+        </div>
+        <div className="funding">
+          Like this tool? You can{' '}
+          <a
+            href="https://paypal.me/markfarnum"
+            target="_blank"
+            rel="noreferrer"
+          >
+            chip in
+          </a>{' '}
+          to pay for the server or{' '}
+          <a
+            href="https://github.com/farkmarnum/stupidnav"
+            target="_blank"
+            rel="noreferrer"
+          >
+            contribute
+          </a>{' '}
+          to improve the code.
+        </div>
       </div>
     </Fragment>
   )
