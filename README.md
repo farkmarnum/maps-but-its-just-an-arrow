@@ -13,7 +13,7 @@ Well... uh, I guess this app is going to be really great for you. I made it as a
 
 ## how
 
-This app leverages the Places and Directions APIs from Google to get (walking) navigation routes once users provide a destination and give location permissions. Then the app provides the user with a compass arrow, always pointing the direction they'd eed to walk to follow the directions. The backend does the heavy lifting, and all API queries are requested from the backend.
+This app leverages the Places and Directions APIs from Google to get (walking) navigation routes once users provide a destination and give location permissions. Then the app provides the user with a compass arrow, always pointing the direction they'd need to walk to follow the directions. The backend does the heavy lifting, and all API queries are requested from the backend.
 
 ## why
 
