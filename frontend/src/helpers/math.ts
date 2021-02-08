@@ -115,8 +115,6 @@ export const getNextPoint = (
     .filter(({ region }) => isPointContainedInRegion(origin, region))
     .sort((a, b) => (a.i > b.i ? 1 : -1))
 
-  // console.log(containingRegions.map(({ i }) => i))
-
   const nextPointData = containingRegions.slice(-1)[0]
 
   return nextPointData?.point
@@ -127,6 +125,5 @@ export const getAngle = (origin: number[], dest: number[]): number => {
   const dy = origin[0] - dest[0]
   const theta = (Math.atan2(dy, dx) * 180) / Math.PI
 
-  // console.info(`dx: ${dx}  dy: ${dy} theta: ${theta}`)
   return theta
 }

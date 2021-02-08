@@ -30,6 +30,7 @@ html, body {
 #app {
 	height: 100%;
   position: relative;
+  z-index: 1;
 }
 
 :not(:root):fullscreen::backdrop {
@@ -42,6 +43,7 @@ html, body {
   right: 0.25rem;
   width: 2rem;
   text-align: right;
+  z-index: 10;
 }
 
 .bottom-right {

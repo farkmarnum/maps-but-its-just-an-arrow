@@ -4,11 +4,12 @@ import WhereTo from './where-to'
 import Arrow from './arrow'
 import { getSuggestions } from '../helpers/api'
 import { getLocation } from '../helpers/location'
-import LocationIcon from './location-icon'
 import FullscreenIcon from './fullscreen-icon'
 
 const WHERE_TO = 'where-to'
 const ARROW = 'arrow'
+
+const isDev = location.hostname === "localhost"
 
 const lockOrientation = async () => {
   try {
@@ -51,7 +52,7 @@ const App: FunctionalComponent = () => {
   const [userLocation, setUserLocation] = useState<Point | undefined>(undefined)
 
   const handleDeviceOrientationChange = (event: DeviceOrientationEvent) => {
-    if (event.absolute) {
+    if (event.absolute || isDev) {
       setDeviceAngle(event.alpha ?? undefined)
     }
   }
@@ -138,9 +139,6 @@ const App: FunctionalComponent = () => {
         <button className="fullscreen" onClick={toggleFullscreen}>
           <FullscreenIcon />
         </button>
-      </div>
-      <div className="bottom-right" style={{ opacity: 0.5 }}>
-        {userLocation && <LocationIcon />}
       </div>
       {currentPage === WHERE_TO && (
         <WhereTo

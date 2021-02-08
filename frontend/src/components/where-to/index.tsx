@@ -6,6 +6,19 @@ import style from './style.css'
 
 const DEBOUNCE_DELAY_MS = 100
 
+const placeholders = [
+  'tell us tell us tell us',
+  'tell us where!',
+  "the name's nav... stupid nav",
+  'where the heck are you going??',
+  'you gotta type here. type it in!',
+  'type here & the arrow will guide you',
+  'get ready for some stupid nav',
+]
+
+const placeholder =
+  placeholders[Math.floor(Math.random() * (placeholders.length - 1))]
+
 const WhereTo = ({
   setInput,
   suggestions,
@@ -29,7 +42,7 @@ const WhereTo = ({
           setInputInner(target.value)
           setInputDebounced.callback(target.value)
         }}
-        placeholder="tell us where!"
+        placeholder={placeholder}
       />
       {suggestions && (
         <div className={style.suggestions}>

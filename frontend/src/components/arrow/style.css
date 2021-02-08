@@ -1,4 +1,9 @@
 .main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
   padding: 3rem 1rem 1rem;
   opacity: 0.35;
 }
@@ -7,7 +12,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 10;
 }
 
 .arrow {
@@ -42,17 +47,7 @@
   float: right;
 }
 
-.reload {
-  position: fixed;
-  font-family: Lucida Sans Unicode;
-  top: 0.2rem;
-  left: calc(50% - 1rem);
-  width: 2rem;
-  z-index: 1;
-}
-
-.close button,
-.reload button {
+.close button {
   background: none;
   border: none;
   outline: none;
@@ -60,7 +55,7 @@
   top: 0;
   left: 0.25rem;
   color: white;
-  font-weight: bold;
+  font-weight: normal;
   font-size: 2.5rem;
   z-index: 999;
   line-height: 0.75;

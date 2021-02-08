@@ -1,9 +1,11 @@
 import { h, Fragment } from 'preact'
-import { useState, useEffect, useCallback } from 'preact/hooks'
+import { useState, useEffect, useRef, useCallback } from 'preact/hooks'
 import { getDirections } from '../../helpers/api'
 import { getNextPoint, getAngle } from '../../helpers/math'
 import { useSetBgColorOnMount } from '../../helpers/hooks'
 import style from './style.css'
+
+const DIRECTIONS_COOLDOWN = 1000
 
 const Arrow = ({
   placeId,
@@ -12,6 +14,7 @@ const Arrow = ({
   deviceAngle,
 }: ArrowArgs): JSX.Element => {
   const [points, setPoints] = useState<Point[] | undefined>(undefined)
+  const getDirectionsWasRecentlyCalled = useRef(false)
 
   // Set bg color
   useSetBgColorOnMount('var(--blue)')
@@ -33,13 +36,16 @@ const Arrow = ({
   }, [placeId, userLocation])
 
   useEffect(() => {
-    if (!points) {
+    if (!nextPoint && !getDirectionsWasRecentlyCalled.current) {
       getDirectionsAndSetPoints()
+      getDirectionsWasRecentlyCalled.current = true
+      setTimeout(() => {
+        getDirectionsWasRecentlyCalled.current = false
+      }, DIRECTIONS_COOLDOWN)
     }
-  }, [getDirectionsAndSetPoints, points])
+  }, [getDirectionsAndSetPoints, points, getDirectionsWasRecentlyCalled])
 
   const calculateNextPoint = useCallback(() => {
-    // console.log('calculateNextPoint')
     if (deviceAngle != null && userLocation && points) {
       const nextPoint = getNextPoint(points, userLocation)
       return nextPoint
@@ -59,24 +65,6 @@ const Arrow = ({
     <Fragment>
       <div className={style.close}>
         <button onClick={goBack}>&times;</button>
-      </div>
-      <div className={style.reload}>
-        <button onClick={getDirectionsAndSetPoints}>&#x21bb;</button>
-      </div>
-      <div className={style.main}>
-        {!userLocation && 'Loading GPS...'}
-        {userLocation && (
-          <div>
-            User location: {userLocation[0]}, {userLocation[1]}
-          </div>
-        )}
-        {deviceAngle != null && <div>Device direction: {deviceAngle}</div>}
-        {nextPoint && (
-          <div>
-            Next Point: {nextPoint[0]}, {nextPoint[1]}
-          </div>
-        )}
-        {arrowAngle && <div>ARROW: {arrowAngle}</div>}
       </div>
       <div
         class={style.arrow}
